@@ -20,19 +20,68 @@
 </head>
 <body style="text-align:center;">
 
-  <!-- ロゴ -->
-  <img src="logo.png" style="width:33%;"><br><br>
+<img src="logo.png" style="width:33%;"><br><br>
 
-  
+<input id="name" placeholder="名前"><br>
+<input id="email" placeholder="メール"><br>
+<textarea id="text" placeholder="本文"></textarea><br>
+<button onclick="post()">投稿</button>
 
-  <input id="name" placeholder="名前"><br>
-  <input id="email" placeholder="メールアドレス"><br>
-  <textarea id="text" placeholder="本文"></textarea><br>
-  <button onclick="post()">投稿</button>
+<hr>
 
-  <hr>
+<div id="posts"></div>
 
-  <div id="posts"></div>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// 君のFirebase設定
+const firebaseConfig = {
+  apiKey: "AIzaSyAUWVKiU73B8K_8TaXzB25VtutUQea7arA",
+  authDomain: "hello-every-day.firebaseapp.com",
+  projectId: "hello-every-day"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 投稿
+window.post = async function () {
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let text = document.getElementById("text").value;
+
+  if (name === "") name = "名無し君";
+
+  await addDoc(collection(db, "posts"), {
+    name,
+    email,
+    text,
+    time: Date.now()
+  });
+};
+
+// リアルタイム表示
+const q = query(collection(db, "posts"), orderBy("time"));
+
+onSnapshot(q, (snapshot) => {
+  const postArea = document.getElementById("posts");
+  postArea.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+
+    postArea.innerHTML += `
+      <div>
+        <b>${data.name}</b> (${data.email})<br>
+        ${data.text}
+        <hr>
+      </div>
+    `;
+  });
+});
+</script>
 
 </body>
 </html>
