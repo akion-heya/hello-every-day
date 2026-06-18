@@ -2,11 +2,29 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>hello every day</title>
-</head>
-<body style="margin:0; display:flex; justify-content:center; align-items:center; height:100vh;">
 
-  <img src="logo.png" style="width:33%;">
+  <!-- タイトル（青文字） -->
+  <title>匿名掲示板「hello every day」</title>
+
+  <!-- 説明文（下の小さい文字） -->
+  <meta name="description" content="現在中１の私が作った匿名掲示板、完成すると思う、使ってもらえると幸いです。バグ報告はｘまたはサイト内バグ報告へｘの連絡先はサイト内記載">
+
+</head>
+<body style="text-align:center;">
+
+  <!-- ロゴ -->
+  <img src="logo.png" style="width:33%;"><br><br>
+
+  <h1>hello every day</h1>
+
+  <input id="name" placeholder="名前"><br>
+  <input id="email" placeholder="メールアドレス"><br>
+  <textarea id="text" placeholder="本文"></textarea><br>
+  <button onclick="post()">投稿</button>
+
+  <hr>
+
+  <div id="posts"></div>
 
 </body>
 </html>
