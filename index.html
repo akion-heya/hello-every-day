@@ -21,7 +21,11 @@
 <body style="text-align:center;">
 
 <img src="logo.png" style="width:33%;"><br><br>
+<input id="threadTitle" placeholder="スレッドタイトル"><br>
+<button onclick="createThread()">スレ作成</button>
 
+<hr>
+<div id="threads"></div>
 <input id="name" placeholder="名前"><br>
 <input id="email" placeholder="メール"><br>
 <textarea id="text" placeholder="本文"></textarea><br>
@@ -61,7 +65,35 @@ window.post = async function () {
     time: Date.now()
   });
 };
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+window.createThread = async function () {
+  let title = document.getElementById("threadTitle").value;
+
+  await addDoc(collection(db, "threads"), {
+    title,
+    time: Date.now()
+  });
+};
+  import { onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const threadQuery = query(collection(db, "threads"), orderBy("time", "desc"));
+
+onSnapshot(threadQuery, (snapshot) => {
+  const area = document.getElementById("threads");
+  area.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+
+    area.innerHTML += `
+      <div>
+        <b>${data.title}</b>
+        <hr>
+      </div>
+    `;
+  });
+});
 // リアルタイム表示
 const q = query(collection(db, "posts"), orderBy("time"));
 
