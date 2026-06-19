@@ -146,7 +146,12 @@ onSnapshot(threadQuery, (snapshot) => {
     const data = doc.data();
 
    area.innerHTML += `
-  <div onclick="openThread('${doc.id}')">
+area.innerHTML += `
+  <div onclick="location.href='thread.html?id=${doc.id}'">
+    <b>${data.title}</b>
+    <hr>
+  </div>
+`;
     <b>${data.title}</b>
     <hr>
   </div>
