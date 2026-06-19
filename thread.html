@@ -41,9 +41,6 @@ const storage = getStorage(app);
 const urlParams = new URLSearchParams(window.location.search);
 const threadId = urlParams.get("id");
 
-// タイトル取得
-const urlParams = new URLSearchParams(window.location.search);
-const threadId = urlParams.get("id");
 
 if (!threadId) {
   document.getElementById("title").innerText = "スレが見つかりません";
