@@ -104,26 +104,7 @@ window.openThread = function (id) {
     orderBy("time")
   );
 
-  onSnapshot(q, (snapshot) => {
-    const postArea = document.getElementById("posts");
-    postArea.innerHTML = "";
 
-    let count = 1;
-
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-
-      postArea.innerHTML += `
-        <div>
-          ${count} 名前：${data.name}<br>
-          ${data.text}
-          <hr>
-        </div>
-      `;
-
-      count++;
-    });
-  });
 };
 
 window.createThread = async function () {
