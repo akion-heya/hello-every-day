@@ -86,12 +86,12 @@ onSnapshot(threadQuery, (snapshot) => {
   snapshot.forEach((doc) => {
     const data = doc.data();
 
-    area.innerHTML += `
-      <div>
-        <b>${data.title}</b>
-        <hr>
-      </div>
-    `;
+   area.innerHTML += `
+  <div onclick="openThread('${doc.id}')">
+    <b>${data.title}</b>
+    <hr>
+  </div>
+`;
   });
 });
 // リアルタイム表示
