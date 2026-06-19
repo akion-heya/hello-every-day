@@ -58,18 +58,42 @@ window.post = async function () {
 
   if (name === "") name = "名無し君";
 
-  await addDoc(collection(db, "posts"), {
+  await addDoc(collection(db, "threads", currentThread, "posts"), {
     name,
     email,
     text,
     time: Date.now()
   });
 };
-  window.openThread = function (id) {
+window.openThread = function (id) {
   currentThread = id;
-  alert("動作遅延修正");
+
+  const q = query(
+    collection(db, "threads", id, "posts"),
+    orderBy("time")
+  );
+
+  onSnapshot(q, (snapshot) => {
+    const postArea = document.getElementById("posts");
+    postArea.innerHTML = "";
+
+    let count = 1;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      postArea.innerHTML += `
+        <div>
+          ${count} 名前：${data.name}<br>
+          ${data.text}
+          <hr>
+        </div>
+      `;
+
+      count++;
+    });
+  });
 };
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 window.createThread = async function () {
   let title = document.getElementById("threadTitle").value;
@@ -79,7 +103,7 @@ window.createThread = async function () {
     time: Date.now()
   });
 };
-  import { onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 const threadQuery = query(collection(db, "threads"), orderBy("time", "desc"));
 
@@ -99,7 +123,6 @@ onSnapshot(threadQuery, (snapshot) => {
   });
 });
 // リアルタイム表示
-const q = query(collection(db, "threads", currentThread, "posts"), orderBy("time"));
 
 onSnapshot(q, (snapshot) => {
   const postArea = document.getElementById("posts");
