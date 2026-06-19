@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>スレッド</title>
+</head>
+
+<body>
+<a href="index.html">← スレ一覧に戻る</a>
+<h2 id="title">読み込み中...</h2>
+
+<div id="posts"></div>
+
+<hr>
+
+<input id="name" placeholder="名前"><br>
+<textarea id="text" placeholder="本文"></textarea><br>
+<button onclick="post()">投稿</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+window.reply = function (num) {
+  const textarea = document.getElementById("text");
+  textarea.value += ">>" + num + "\n";
+  textarea.focus();
+};
+const firebaseConfig = {
+  apiKey: "AIzaSyAUWVKiU73B8K_8TaXzB25VtutUQea7arA",
+  authDomain: "hello-every-day.firebaseapp.com",
+  projectId: "hello-every-day"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// URLからID取得
+const urlParams = new URLSearchParams(window.location.search);
+const threadId = urlParams.get("id");
+
+// タイトル取得
+const urlParams = new URLSearchParams(window.location.search);
+const threadId = urlParams.get("id");
+
+if (!threadId) {
+  document.getElementById("title").innerText = "スレが見つかりません";
+} else {
+  const threadRef = doc(db, "threads", threadId);
+  const threadDoc = await getDoc(threadRef);
+
+  if (threadDoc.exists()) {
+    document.getElementById("title").innerText = threadDoc.data().title;
+  } else {
+    document.getElementById("title").innerText = "削除されたスレです";
+  }
+}
+// 投稿
+window.post = async function () {
+  let name = document.getElementById("name").value;
+  let text = document.getElementById("text").value;
+
+  if (name === "") name = "名無し君";
+
+  await addDoc(collection(db, "threads", threadId, "posts"), {
+    name,
+    text,
+    time: Date.now()
+  });
+};
+
+// 投稿表示
+const q = query(
+  collection(db, "threads", threadId, "posts"),
+  orderBy("time")
+);
+
+onSnapshot(q, (snapshot) => {
+  const postArea = document.getElementById("posts");
+  postArea.innerHTML = "";
+
+  let count = 1;
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+
+  postArea.innerHTML += `
+<div id="post-${count}">
+    <span onclick="reply(${count})" style="color:blue; cursor:pointer;">
+      ${count}
+    </span>
+    名前：${data.name}<br>
+    ${data.text}
+    <hr>
+  </div>
+`;
+    count++;
+  });
+});
+</script>
+
+</body>
+</html>
