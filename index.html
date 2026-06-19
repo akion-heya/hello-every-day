@@ -142,22 +142,7 @@ onSnapshot(threadQuery, (snapshot) => {
 });
 // リアルタイム表示
 
-onSnapshot(q, (snapshot) => {
-  const postArea = document.getElementById("posts");
-  postArea.innerHTML = "";
 
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-
-    postArea.innerHTML += `
-      <div>
-        <b>${data.name}</b> (${data.email})<br>
-        ${data.text}
-        <hr>
-      </div>
-    `;
-  });
-});
   window.createThread = createThread;
 window.post = post;
 window.sendFeedback = sendFeedback;
