@@ -15,11 +15,14 @@
 
 <input id="name" placeholder="名前"><br>
 <textarea id="text" placeholder="本文"></textarea><br>
+  <input type="file" id="image">
 <button onclick="post()">投稿</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 window.reply = function (num) {
   const textarea = document.getElementById("text");
   textarea.value += ">>" + num + "\n";
@@ -33,7 +36,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const storage = getStorage(app);
 // URLからID取得
 const urlParams = new URLSearchParams(window.location.search);
 const threadId = urlParams.get("id");
@@ -58,12 +61,23 @@ if (!threadId) {
 window.post = async function () {
   let name = document.getElementById("name").value;
   let text = document.getElementById("text").value;
+  let file = document.getElementById("image").files[0];
 
   if (name === "") name = "名無し君";
+
+  let imageUrl = "";
+
+  // 画像がある場合アップロード
+  if (file) {
+    const storageRef = ref(storage, "images/" + Date.now() + "_" + file.name);
+    await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(storageRef);
+  }
 
   await addDoc(collection(db, "threads", threadId, "posts"), {
     name,
     text,
+    imageUrl,
     time: Date.now()
   });
 };
@@ -90,6 +104,7 @@ onSnapshot(q, (snapshot) => {
     </span>
     名前：${data.name}<br>
     ${data.text}
+${data.imageUrl ? `<br><img src="${data.imageUrl}" style="max-width:200px;">` : ""}
     <hr>
   </div>
 `;
