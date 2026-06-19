@@ -21,6 +21,10 @@
 <body style="text-align:center;">
 
 <img src="logo.png" style="width:33%;"><br><br>
+  <p id="description">
+意見箱とバグ報告はサイト内右下にあります。
+    基本的なマナーは守ってください
+</p>
 <input id="threadTitle" placeholder="スレッドタイトル"><br>
 <button onclick="createThread()">スレ作成</button>
 
@@ -32,7 +36,20 @@
 <button onclick="post()">投稿</button>
 
 <hr>
+<hr>
 
+<h3>ご意見・バグ報告</h3>
+
+<select id="type">
+  <option value="意見">意見</option>
+  <option value="バグ">バグ報告</option>
+</select><br>
+
+<textarea id="feedback" placeholder="内容を書いてください"></textarea><br>
+
+<button onclick="sendFeedback()">送信</button>
+
+<hr>
 <div id="posts"></div>
 
 <!-- Firebase -->
@@ -65,6 +82,20 @@ window.post = async function () {
     time: Date.now()
   });
 };
+ window.sendFeedback = async function () {
+  let type = document.getElementById("type").value;
+  let text = document.getElementById("feedback").value;
+
+  if (text === "") return;
+
+  await addDoc(collection(db, "feedback"), {
+    type,
+    text,
+    time: Date.now()
+  });
+
+  alert("送信しました！");
+}; 
 window.openThread = function (id) {
   currentThread = id;
 
