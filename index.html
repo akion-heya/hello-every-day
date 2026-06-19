@@ -39,7 +39,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+let currentThread = null;
 // 君のFirebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAUWVKiU73B8K_8TaXzB25VtutUQea7arA",
@@ -64,6 +64,10 @@ window.post = async function () {
     text,
     time: Date.now()
   });
+};
+  window.openThread = function (id) {
+  currentThread = id;
+  alert("動作遅延修正");
 };
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -95,7 +99,7 @@ onSnapshot(threadQuery, (snapshot) => {
   });
 });
 // リアルタイム表示
-const q = query(collection(db, "posts"), orderBy("time"));
+const q = query(collection(db, "threads", currentThread, "posts"), orderBy("time"));
 
 onSnapshot(q, (snapshot) => {
   const postArea = document.getElementById("posts");
