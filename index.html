@@ -69,6 +69,10 @@ const db = getFirestore(app);
 
 // 投稿
 window.post = async function () {
+  if (!currentThread) {
+  alert("スレを選んでください");
+  return;
+}
   let name = document.getElementById("name").value;
   let email = document.getElementById("email").value;
   let text = document.getElementById("text").value;
