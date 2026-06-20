@@ -117,43 +117,30 @@ onSnapshot(q, (snapshot) => {
 
   let count = 1;
 
-  snapshot.forEach((doc) => {
-   const data = doc.data();
-const id = doc.id;
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    const id = docSnap.id;
 
-let html = `
-  <div>
-    ${data.text}
-`;
+    let html = `
+      <div id="post-${count}">
+        <span onclick="reply(${count})" style="color:blue; cursor:pointer;">
+          ${count}
+        </span>
+        名前：${data.name}<br>
+        ${data.text}
+        ${data.imageUrl ? `<br><img src="${data.imageUrl}" style="max-width:200px;">` : ""}
+    `;
 
-if (isAdmin()) {
-  html += `<button onclick="deleteComment('${id}')">削除</button>`;
-}
+    if (isAdmin()) {
+      html += `<br><button onclick="deleteComment('${id}')">削除</button>`;
+    }
 
-snapshot.forEach((docSnap) => {
-  const data = docSnap.data();
-  const id = docSnap.id;
+    html += `<hr></div>`;
 
-  let html = `
-    <div id="post-${count}">
-      <span onclick="reply(${count})" style="color:blue; cursor:pointer;">
-        ${count}
-      </span>
-      名前：${data.name}<br>
-      ${data.text}
-      ${data.imageUrl ? `<br><img src="${data.imageUrl}" style="max-width:200px;">` : ""}
-  `;
-
-  if (isAdmin()) {
-    html += `<br><button onclick="deleteComment('${id}')">削除</button>`;
-  }
-
-  html += `<hr></div>`;
-
-  postArea.innerHTML += html;
-  count++;
+    postArea.innerHTML += html;
+    count++;
+  });
 });
-
 </script>
 
 </body>
