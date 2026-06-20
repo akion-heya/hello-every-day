@@ -136,13 +136,35 @@ onSnapshot(threadQuery, (snapshot) => {
   snapshot.forEach((doc) => {
     const data = doc.data();
 
-   area.innerHTML += `
+  snapshot.forEach((doc) => {
+  const data = doc.data();
 
-  <div onclick="location.href='thread.html?id=${doc.id}'">
+  const div = document.createElement("div");
+
+  div.innerHTML = `
     <b>${data.title}</b>
     <hr>
-  </div>
-`;
+  `;
+
+  div.onclick = () => {
+    location.href = "thread.html?id=" + doc.id;
+  };
+
+  /* 🔥 ここが管理者削除ボタン */
+  if (window.isAdmin) {
+    const del = document.createElement("button");
+    del.textContent = "削除";
+
+    del.onclick = (e) => {
+      e.stopPropagation();
+      alert("削除まだ");
+    };
+
+    div.appendChild(del);
+  }
+
+  area.appendChild(div);
+});
 
   });
 });
