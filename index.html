@@ -20,7 +20,10 @@
 </head>
 
 <body style="text-align:center;">
-
+<div style="position:fixed; top:10px; right:10px;">
+  <span id="adminStatus"></span>
+  <button id="loginBtn" onclick="goLogin()">管理者ログイン</button>
+</div>
 <img src="logo.png" style="width:33%;"><br><br>
   <p id="description">
 意見箱とバグ報告はサイト内右下にあります。
@@ -53,6 +56,8 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 let currentThread = null;
 // 君のFirebase設定
 const firebaseConfig = {
@@ -63,7 +68,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const auth = getAuth(app);
+const ADMIN_UID = "自分のUID";
+  window.goLogin = () => {
+  location.href = "admin.html";
+};
 // 投稿
 window.post = async function () {
   if (!currentThread) {
@@ -143,6 +152,18 @@ onSnapshot(threadQuery, (snapshot) => {
   window.createThread = createThread;
 window.post = post;
 window.sendFeedback = sendFeedback;
+  onAuthStateChanged(auth, (user) => {
+  const status = document.getElementById("adminStatus");
+  const btn = document.getElementById("loginBtn");
+
+  if (user && user.uid === ADMIN_UID) {
+    status.textContent = "管理者";
+    btn.style.display = "none";
+    window.isAdmin = true;
+  } else {
+    window.isAdmin = false;
+  }
+});
 </script>
 
 </body>
