@@ -146,6 +146,12 @@ ${data.imageUrl ? `<br><img src="${data.imageUrl}" style="max-width:200px;">` : 
     count++;
   });
 });
+  import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  loadComments(); // ← コメント表示処理
+});
 </script>
 
 </body>
