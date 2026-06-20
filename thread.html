@@ -28,6 +28,19 @@ window.reply = function (num) {
   textarea.value += ">>" + num + "\n";
   textarea.focus();
 };
+  import { getFirestore, deleteDoc, doc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const db = getFirestore(app);
+
+window.deleteComment = async (id) => {
+  if (!confirm("削除する？")) return;
+
+  await deleteDoc(doc(db, "comments", id));
+
+  alert("削除した");
+  location.reload();
+};
 const firebaseConfig = {
   apiKey: "AIzaSyAUWVKiU73B8K_8TaXzB25VtutUQea7arA",
   authDomain: "hello-every-day.firebaseapp.com",
@@ -35,6 +48,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+  
+  import { getAuth } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const auth = getAuth(app);
+
+function isAdmin() {
+  return auth.currentUser != null;
+}
 const db = getFirestore(app);
 const storage = getStorage(app);
 // URLからID取得
