@@ -25,9 +25,18 @@ window.login = async () => {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("pass").value;
 
-  await signInWithEmailAndPassword(auth, email, pass);
+window.login = async () => {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("pass").value;
 
-  location.href = "index.html";
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    alert("ログイン成功");
+    location.href = "index.html";
+  } catch (e) {
+    alert("ログイン失敗: " + e.message);
+  }
+};
 };
 </script>
 
