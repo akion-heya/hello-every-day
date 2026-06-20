@@ -42,7 +42,7 @@ window.deleteComment = async (id) => {
 
 await deleteDoc(doc(db, "threads", threadId, "posts", id));
   alert("削除した");
-  location.reload();
+
 };
 const firebaseConfig = {
   apiKey: "AIzaSyAUWVKiU73B8K_8TaXzB25VtutUQea7arA",
