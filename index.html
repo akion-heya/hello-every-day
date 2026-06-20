@@ -58,6 +58,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { 
+  getFirestore, collection, addDoc, onSnapshot, query, orderBy,
+  deleteDoc, doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 let currentThread = null;
 // 君のFirebase設定
 const firebaseConfig = {
@@ -133,10 +137,7 @@ onSnapshot(threadQuery, (snapshot) => {
   const area = document.getElementById("threads");
   area.innerHTML = "";
 
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-
-  snapshot.forEach((doc) => {
+snapshot.forEach((doc) => {
   const data = doc.data();
 
   const div = document.createElement("div");
@@ -150,14 +151,18 @@ onSnapshot(threadQuery, (snapshot) => {
     location.href = "thread.html?id=" + doc.id;
   };
 
-  /* 🔥 ここが管理者削除ボタン */
-  if (window.isAdmin) {
+  if (window.isAdmin === true) {
     const del = document.createElement("button");
     del.textContent = "削除";
 
-    del.onclick = (e) => {
+    del.onclick = async (e) => {
       e.stopPropagation();
-      alert("削除まだ");
+
+      if (!confirm("スレ削除する？")) return;
+
+      await deleteDoc(doc(db, "threads", doc.id));
+
+      alert("削除した");
     };
 
     div.appendChild(del);
