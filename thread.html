@@ -94,7 +94,21 @@ onSnapshot(q, (snapshot) => {
   let count = 1;
 
   snapshot.forEach((doc) => {
-    const data = doc.data();
+   const data = doc.data();
+const id = doc.id;
+
+let html = `
+  <div>
+    ${data.text}
+`;
+
+if (isAdmin()) {
+  html += `<button onclick="deleteComment('${id}')">削除</button>`;
+}
+
+html += `</div>`;
+
+container.innerHTML += html;
 
   postArea.innerHTML += `
 <div id="post-${count}">
