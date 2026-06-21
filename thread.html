@@ -80,29 +80,37 @@ if (!threadId) {
 }
 // 投稿
 window.post = async function () {
+  if (!currentThread) {
+    alert("スレを選んでください");
+    return;
+  }
+
   let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
   let text = document.getElementById("text").value;
-  let file = document.getElementById("image").files[0];
 
   if (name === "") name = "名無し君";
 
-  let imageUrl = "";
+  // 👇 NGワード検出
+  const hit = NG_WORDS.find(word => text.includes(word));
 
-  // 画像がある場合アップロード
-  if (file) {
-    const storageRef = ref(storage, "images/" + Date.now() + "_" + file.name);
-    await uploadBytes(storageRef, file);
-    imageUrl = await getDownloadURL(storageRef);
+  if (hit) {
+    // 👇 裏でFirebaseに送るだけ（投稿は止めない）
+    await addDoc(collection(db, "ng_reports"), {
+      word: hit,
+      text: text,
+      threadId: currentThread,
+      time: Date.now()
+    });
   }
 
-  await addDoc(collection(db, "threads", threadId, "posts"), {
+  // 👇 普通に投稿される
+  await addDoc(collection(db, "threads", currentThread, "posts"), {
     name,
+    email,
     text,
-    imageUrl,
     time: Date.now()
   });
-  document.getElementById("text").value = "";
-document.getElementById("image").value = "";
 };
 
 // 投稿表示
