@@ -105,7 +105,7 @@ window.post = async function () {
   }
 
   let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
+  
   let text = document.getElementById("text").value;
 
   if (!text) return;
@@ -113,7 +113,7 @@ window.post = async function () {
 
   await addDoc(collection(db, "threads", !threadId, "posts"), {
     name,
-    email,
+  
     text,
     uid: currentUid,   // ← 必須（後で誰をBANするかに使う）
     time: Date.now()
