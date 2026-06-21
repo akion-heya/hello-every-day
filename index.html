@@ -169,6 +169,28 @@ onSnapshot(threadQuery, (snapshot) => {
 
     div.onclick = () => {
       location.href = "thread.html?id=" + d.id;
+      const reportBtn = document.createElement("button");
+reportBtn.textContent = "通報";
+
+reportBtn.onclick = async (e) => {
+  e.stopPropagation();
+
+  if (!confirm("通報しますか？")) return;
+
+  const note = prompt("備考（空欄OK）") || "";
+
+  await addDoc(collection(db, "reports"), {
+    type: "thread",
+    targetId: d.id,
+    content: data.title,
+    note,
+    time: Date.now()
+  });
+
+  alert("通報しました");
+};
+
+div.appendChild(reportBtn);
     };
 
     // 👇 管理者だけ削除ボタン
