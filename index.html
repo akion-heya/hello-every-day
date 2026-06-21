@@ -167,33 +167,36 @@ onSnapshot(threadQuery, (snapshot) => {
       <hr>
     `;
 
+    // スレクリック
     div.onclick = () => {
       location.href = "thread.html?id=" + d.id;
-      const reportBtn = document.createElement("button");
-reportBtn.textContent = "通報";
-
-reportBtn.onclick = async (e) => {
-  e.stopPropagation();
-
-  if (!confirm("通報しますか？")) return;
-
-  const note = prompt("備考（空欄OK）") || "";
-
-  await addDoc(collection(db, "reports"), {
-    type: "thread",
-    targetId: d.id,
-    content: data.title,
-    note,
-    time: Date.now()
-  });
-
-  alert("通報しました");
-};
-
-div.appendChild(reportBtn);
     };
 
-    // 👇 管理者だけ削除ボタン
+    // 🔥 通報ボタン（ここに追加）
+    const reportBtn = document.createElement("button");
+    reportBtn.textContent = "通報";
+
+    reportBtn.onclick = async (e) => {
+      e.stopPropagation(); // スレ開くの防ぐ
+
+      if (!confirm("通報しますか？")) return;
+
+      const note = prompt("備考（空欄OK）") || "";
+
+      await addDoc(collection(db, "reports"), {
+        type: "thread",
+        targetId: d.id,
+        content: data.title,
+        note,
+        time: Date.now()
+      });
+
+      alert("通報しました");
+    };
+
+    div.appendChild(reportBtn);
+
+    // 👇 管理者削除ボタン
     if (window.isAdmin === true) {
       const del = document.createElement("button");
       del.textContent = "削除";
@@ -203,13 +206,8 @@ div.appendChild(reportBtn);
 
         if (!confirm("スレ削除する？")) return;
 
-        try {
-          await deleteDoc(doc(db, "threads", d.id));
-          alert("削除した");
-        } catch (err) {
-          console.error(err);
-          alert("削除失敗：" + err.message);
-        }
+        await deleteDoc(doc(db, "threads", d.id));
+        alert("削除した");
       };
 
       div.appendChild(del);
