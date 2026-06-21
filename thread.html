@@ -126,6 +126,8 @@ onSnapshot(q, (snapshot) => {
     const data = docSnap.data();
     const id = docSnap.id;
 
+    const div = document.createElement("div");
+
     let html = `
       <div id="post-${count}">
         <span onclick="reply(${count})" style="color:blue; cursor:pointer;">
@@ -136,32 +138,39 @@ onSnapshot(q, (snapshot) => {
         ${data.imageUrl ? `<br><img src="${data.imageUrl}" style="max-width:200px;">` : ""}
     `;
 
+    // 管理者削除ボタン
     if (isAdmin()) {
       html += `<br><button onclick="deleteComment('${id}')">削除</button>`;
     }
 
     html += `<hr></div>`;
-const reportBtn = document.createElement("button");
-reportBtn.textContent = "通報";
 
-reportBtn.onclick = async () => {
-  if (!confirm("通報しますか？")) return;
+    div.innerHTML = html;
 
-  const note = prompt("備考（空欄OK）") || "";
+    // 通報ボタン
+    const reportBtn = document.createElement("button");
+    reportBtn.textContent = "通報";
 
-  await addDoc(collection(db, "reports"), {
-    type: "comment",
-    targetId: doc.id,
-    content: data.text,
-    note,
-    time: Date.now()
-  });
+    reportBtn.onclick = async () => {
+      if (!confirm("通報しますか？")) return;
 
-  alert("通報しました");
-};
+      const note = prompt("備考（空欄OK）") || "";
 
-div.appendChild(reportBtn);
-    postArea.innerHTML += html;
+      await addDoc(collection(db, "reports"), {
+        type: "comment",
+        targetId: id,
+        content: data.text,
+        note,
+        time: Date.now()
+      });
+
+      alert("通報しました");
+    };
+
+    div.appendChild(reportBtn);
+
+    postArea.appendChild(div);
+
     count++;
   });
 });
