@@ -151,36 +151,21 @@ onSnapshot(threadQuery, (snapshot) => {
   const area = document.getElementById("threads");
   area.innerHTML = "";
 
-snapshot.forEach((snap) => {
-  const data = snap.data();
-  const div = document.createElement("div");
+snapshot.forEach((d) => {
+  const data = d.data();
 
-  div.innerHTML = `
-    <b>${data.title}</b>
-    <hr>
-  `;
+  del.onclick = async (e) => {
+    e.stopPropagation();
 
-  div.onclick = () => {
-    location.href = "thread.html?id=" + doc.id;
-  };
+    if (!confirm("スレ削除する？")) return;
 
-  if (window.isAdmin === true) {
-    const del = document.createElement("button");
-    del.textContent = "削除";
-
-    del.onclick = async (e) => {
-      e.stopPropagation();
-
-      if (!confirm("スレ削除する？")) return;
-
-     await deleteDoc(doc(db, "threads", snap.id));
+    try {
+      await deleteDoc(doc(db, "threads", d.id));
       alert("削除した");
-    };
-
-    div.appendChild(del);
-  }
-
-  area.appendChild(div);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 });
 
   });
