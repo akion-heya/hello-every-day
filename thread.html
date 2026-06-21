@@ -54,7 +54,7 @@ const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
-
+const NG_WORDS = ["死ね", "バカ", "消えろ"]; // ←あとで自由に追加
 function isAdmin() {
   return auth.currentUser != null;
 }
