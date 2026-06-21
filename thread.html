@@ -136,7 +136,26 @@ onSnapshot(q, (snapshot) => {
     }
 
     html += `<hr></div>`;
+const reportBtn = document.createElement("button");
+reportBtn.textContent = "通報";
 
+reportBtn.onclick = async () => {
+  if (!confirm("通報しますか？")) return;
+
+  const note = prompt("備考（空欄OK）") || "";
+
+  await addDoc(collection(db, "reports"), {
+    type: "comment",
+    targetId: doc.id,
+    content: data.text,
+    note,
+    time: Date.now()
+  });
+
+  alert("通報しました");
+};
+
+div.appendChild(reportBtn);
     postArea.innerHTML += html;
     count++;
   });
