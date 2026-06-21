@@ -111,7 +111,7 @@ window.post = async function () {
   if (!text) return;
   if (!name) name = "名無し君";
 
-  await addDoc(collection(db, "threads", !threadId, "posts"), {
+  await addDoc(collection(db, "threads", threadId, "posts"), {
     name,
   
     text,
