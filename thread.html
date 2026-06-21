@@ -28,6 +28,16 @@ import {
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
      import { getAuth } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"; 
+  import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 window.reply = function (num) {
   const textarea = document.getElementById("text");
   textarea.value += ">>" + num + "\n";
@@ -54,6 +64,7 @@ const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+  let currentUid = null;
 const NG_WORDS = ["死ね", "バカ", "消えろ"]; // ←あとで自由に追加
 function isAdmin() {
   return auth.currentUser != null;
@@ -80,30 +91,35 @@ if (!threadId) {
 }
 // 投稿
 window.post = async function () {
-  if (!threadId) {
+  if (!currentThread) {
     alert("スレを選んでください");
     return;
   }
 
-  let name = document.getElementById("name").value;
-  let text = document.getElementById("text").value;
-
-  if (name === "") name = "名無し君";
-
-  const hit = NG_WORDS.find(word => text.includes(word));
-
-  if (hit) {
-    await addDoc(collection(db, "ng_reports"), {
-      word: hit,
-      text: text,
-      threadId: threadId,
-      time: Date.now()
-    });
+  // UID未取得ガード
+  if (!currentUid) {
+    alert("読み込み中です。少し待ってから投稿してください。");
+    return;
   }
 
-  await addDoc(collection(db, "threads", threadId, "posts"), {
+  // 🔴 BANチェック
+  if (await isBanned(currentUid)) {
+    alert("あなたはBANされています");
+    return;
+  }
+
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let text = document.getElementById("text").value;
+
+  if (!text) return;
+  if (!name) name = "名無し君";
+
+  await addDoc(collection(db, "threads", currentThread, "posts"), {
     name,
+    email,
     text,
+    uid: currentUid,   // ← 必須（後で誰をBANするかに使う）
     time: Date.now()
   });
 
@@ -174,6 +190,19 @@ onSnapshot(q, (snapshot) => {
     count++;
   });
 });
+  onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    await signInAnonymously(auth);
+  } else {
+    currentUid = user.uid;
+    console.log("UID:", currentUid);
+  }
+});
+  async function isBanned(uid) {
+  const ref = doc(db, "bans", uid);
+  const snap = await getDoc(ref);
+  return snap.exists();
+}
 </script>
 
 </body>
