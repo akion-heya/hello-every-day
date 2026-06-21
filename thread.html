@@ -80,37 +80,34 @@ if (!threadId) {
 }
 // 投稿
 window.post = async function () {
-  if (!currentThread) {
+  if (!threadId) {
     alert("スレを選んでください");
     return;
   }
 
   let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
   let text = document.getElementById("text").value;
 
   if (name === "") name = "名無し君";
 
-  // 👇 NGワード検出
   const hit = NG_WORDS.find(word => text.includes(word));
 
   if (hit) {
-    // 👇 裏でFirebaseに送るだけ（投稿は止めない）
     await addDoc(collection(db, "ng_reports"), {
       word: hit,
       text: text,
-      threadId: currentThread,
+      threadId: threadId,
       time: Date.now()
     });
   }
 
-  // 👇 普通に投稿される
-  await addDoc(collection(db, "threads", currentThread, "posts"), {
+  await addDoc(collection(db, "threads", threadId, "posts"), {
     name,
-    email,
     text,
     time: Date.now()
   });
+
+  document.getElementById("text").value = "";
 };
 
 // 投稿表示
