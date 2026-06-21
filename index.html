@@ -151,9 +151,8 @@ onSnapshot(threadQuery, (snapshot) => {
   const area = document.getElementById("threads");
   area.innerHTML = "";
 
-snapshot.forEach((doc) => {
-  const data = doc.data();
-
+snapshot.forEach((snap) => {
+  const data = snap.data();
   const div = document.createElement("div");
 
   div.innerHTML = `
@@ -174,8 +173,7 @@ snapshot.forEach((doc) => {
 
       if (!confirm("スレ削除する？")) return;
 
-      await deleteDoc(doc(db, "threads", doc.id));
-
+     await deleteDoc(doc(db, "threads", snap.id));
       alert("削除した");
     };
 
