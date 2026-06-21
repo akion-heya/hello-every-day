@@ -151,24 +151,45 @@ onSnapshot(threadQuery, (snapshot) => {
   const area = document.getElementById("threads");
   area.innerHTML = "";
 
-snapshot.forEach((d) => {
-  const data = d.data();
+  snapshot.forEach((d) => {
+    const data = d.data();
 
-  del.onclick = async (e) => {
-    e.stopPropagation();
+    const div = document.createElement("div");
 
-    if (!confirm("スレ削除する？")) return;
+    div.innerHTML = `
+      <b>${data.title}</b>
+      <hr>
+    `;
 
-    try {
-      await deleteDoc(doc(db, "threads", d.id));
-      alert("削除した");
-    } catch (err) {
-      alert(err.message);
+    div.onclick = () => {
+      location.href = "thread.html?id=" + d.id;
+    };
+
+    // 👇 管理者だけ削除ボタン
+    if (window.isAdmin === true) {
+      const del = document.createElement("button");
+      del.textContent = "削除";
+
+      del.onclick = async (e) => {
+        e.stopPropagation();
+
+        if (!confirm("スレ削除する？")) return;
+
+        try {
+          await deleteDoc(doc(db, "threads", d.id));
+          alert("削除した");
+        } catch (err) {
+          console.error(err);
+          alert("削除失敗：" + err.message);
+        }
+      };
+
+      div.appendChild(del);
     }
-  };
-});
 
+    area.appendChild(div);
   });
+});
 
 // リアルタイム表示
 
