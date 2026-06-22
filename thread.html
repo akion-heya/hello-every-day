@@ -133,6 +133,8 @@ const q = query(
 );
 
 onSnapshot(q, (snapshot) => {
+  
+  if (!isReady) return;
   const postArea = document.getElementById("posts");
   postArea.innerHTML = "";
 
@@ -189,7 +191,6 @@ onSnapshot(q, (snapshot) => {
 
     count++;
   });
-  if (!isReady) return;
 });
   onAuthStateChanged(auth, async (user) => {
   if (!user) {
