@@ -126,11 +126,7 @@ window.post = async function () {
   document.getElementById("text").value = "";
 };
 
-// 投稿表示
-const q = query(
-  collection(db, "threads", threadId, "posts"),
-  orderBy("time")
-);
+
 
 
   onAuthStateChanged(auth, async (user) => {
