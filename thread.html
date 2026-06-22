@@ -163,8 +163,7 @@ startSnapshot();
     collection(db, "threads", threadId, "posts"),
     orderBy("time")
   );
-  }
-  onSnapshot(q, (snapshot) => {
+     onSnapshot(q, (snapshot) => {
   
 
   const postArea = document.getElementById("posts");
@@ -224,6 +223,8 @@ startSnapshot();
     count++;
   });
 });
+  }
+ 
   async function isBanned(uid) {
   const ref = doc(db, "bans", uid);
   const snap = await getDoc(ref);
