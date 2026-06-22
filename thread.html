@@ -132,7 +132,38 @@ const q = query(
   orderBy("time")
 );
 
-onSnapshot(q, (snapshot) => {
+
+  onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    await signInAnonymously(auth);
+    return;
+  }
+
+  currentUid = user.uid;
+
+  const userRef = doc(db, "users", currentUid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      role: "user",
+      createdAt: Date.now()
+    });
+  }
+
+  const data = (await getDoc(userRef)).data();
+  isAdminFlag = data.role === "admin";
+    isReady = true;
+startSnapshot();
+  
+   
+});
+  function startSnapshot() {
+  const q = query(
+    collection(db, "threads", threadId, "posts"),
+    orderBy("time")
+  );
+  onSnapshot(q, (snapshot) => {
   
   if (!isReady) return;
   const postArea = document.getElementById("posts");
@@ -191,30 +222,6 @@ onSnapshot(q, (snapshot) => {
 
     count++;
   });
-});
-  onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    await signInAnonymously(auth);
-    return;
-  }
-
-  currentUid = user.uid;
-
-  const userRef = doc(db, "users", currentUid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      role: "user",
-      createdAt: Date.now()
-    });
-  }
-
-  const data = (await getDoc(userRef)).data();
-  isAdminFlag = data.role === "admin";
-
-  isReady = true;
-   
 });
   async function isBanned(uid) {
   const ref = doc(db, "bans", uid);
