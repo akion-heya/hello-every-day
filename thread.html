@@ -155,7 +155,7 @@ onSnapshot(q, (snapshot) => {
     `;
 
     // 管理者削除ボタン
-    if (isAdminFlag()) {
+    if (isAdminFlag) {
       html += `<br><button onclick="deleteComment('${id}')">削除</button>`;
     }
 
