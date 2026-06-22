@@ -163,6 +163,7 @@ startSnapshot();
     collection(db, "threads", threadId, "posts"),
     orderBy("time")
   );
+  }
   onSnapshot(q, (snapshot) => {
   
   if (!isReady) return;
