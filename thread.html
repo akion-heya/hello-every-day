@@ -214,6 +214,8 @@ onSnapshot(q, (snapshot) => {
   isAdminFlag = data.role === "admin";
 
   isReady = true;
+     const postArea = document.getElementById("posts");
+  postArea.innerHTML = "";
 });
   async function isBanned(uid) {
   const ref = doc(db, "bans", uid);
