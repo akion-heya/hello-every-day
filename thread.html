@@ -91,6 +91,13 @@ if (!threadId) {
 }
 // 投稿
 window.post = async function () {
+console.log("auth:", auth.currentUser);
+  console.log("uid:", currentUid);
+
+  if (!auth.currentUser) {
+    alert("ログインがまだ有効じゃない");
+    return;
+  }
   if (!threadId) {
     alert("スレを選んでください");
     return;
